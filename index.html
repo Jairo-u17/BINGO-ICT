@@ -849,7 +849,6 @@
         return 'O';
     }
 
-    /* GESTIÓN DE LOCALSTORAGE (PERSISTENCIA) */
     function saveState() {
         const state = {
             min,
@@ -878,7 +877,6 @@
         const savedState = forceReset ? null : loadState();
 
         if (savedState && savedState.calledNumbers) {
-            // Restaurar sesión previa guardada
             min = savedState.min || 1;
             max = savedState.max || 75;
             inputMin.value = min;
@@ -889,7 +887,6 @@
             displayLetter.textContent = savedState.lastLetter || "-";
             displayNum.textContent = savedState.lastNum || "-";
 
-            // Si ya hay juego en marcha, bloquear inputs
             if (calledNumbers.length > 0) {
                 inputMin.disabled = true;
                 inputMax.disabled = true;
@@ -904,7 +901,6 @@
                 btnDraw.disabled = false;
             }
         } else {
-            // Iniciar nueva partida
             min = parseInt(inputMin.value) || 1;
             max = parseInt(inputMax.value) || 75;
 
@@ -936,7 +932,6 @@
 
         generarTableroBingo();
 
-        // Marcar visualmente los números que ya habían salido en la sesión guardada
         calledNumbers.forEach(item => {
             const slot = document.getElementById(`slot-${item.numero}`);
             if (slot) slot.classList.add('called');
@@ -1034,7 +1029,7 @@
 
         actualizarHistorial();
         actualizarStats();
-        saveState(); // Guardar en el navegador
+        saveState();
 
         isRolling = false;
         if (availableNumbers.length > 0) {
@@ -1080,6 +1075,7 @@
         return res;
     }
 
+    /* GENERADOR DE CARTONES CON LOGOS INCORPORADOS */
     function generarCartonesPDF() {
         const countInput = prompt("¿Cuántos cartones deseas generar para imprimir?", "12");
         if (!countInput) return;
@@ -1119,30 +1115,63 @@
                     background: #ffffff;
                 }
                 .card-header {
-                    text-align: center;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                     border-bottom: 2px solid #d52b1e;
                     padding-bottom: 4px;
                     margin-bottom: 4px;
-                    position: relative;
                 }
-                .card-id {
-                    position: absolute;
-                    right: 0;
-                    top: 0;
-                    font-size: 11px;
-                    font-weight: 800;
-                    color: #64748b;
+                .card-brand {
+                    text-align: left;
                 }
                 .card-title {
-                    font-size: 17px;
+                    font-size: 16px;
                     font-weight: 900;
                     color: #00296b;
-                    letter-spacing: 1px;
+                    letter-spacing: 0.5px;
+                    line-height: 1.1;
                 }
                 .card-sub {
-                    font-size: 10px;
+                    font-size: 9.5px;
                     font-weight: bold;
                     color: #d52b1e;
+                }
+                .card-header-right {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+                .mini-logos {
+                    display: flex;
+                    gap: 4px;
+                    align-items: center;
+                }
+                .mini-logo-wrap {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    border: 1.5px solid #0039a6;
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #fff;
+                }
+                .mini-logo-wrap img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                .mini-icn img {
+                    transform: scale(1.42);
+                }
+                .card-id {
+                    font-size: 11px;
+                    font-weight: 900;
+                    color: #64748b;
+                    margin-left: 2px;
                 }
                 table {
                     width: 100%;
@@ -1201,9 +1230,18 @@
             html += `
             <div class="card">
                 <div class="card-header">
-                    <span class="card-id">N° ${cardNum}</span>
-                    <div class="card-title">BINGO ICT 🇨🇱</div>
-                    <div class="card-sub">GRAN FONDA DIECIOCHERA • PUCV</div>
+                    <div class="card-brand">
+                        <div class="card-title">BINGO ICT 🇨🇱</div>
+                        <div class="card-sub">GRAN FONDA DIECIOCHERA • PUCV</div>
+                    </div>
+                    <div class="card-header-right">
+                        <div class="mini-logos">
+                            <div class="mini-logo-wrap"><img src="Logo ICTRA.png" alt="ICTRA"></div>
+                            <div class="mini-logo-wrap"><img src="LOGO ICC.png" alt="ICC"></div>
+                            <div class="mini-logo-wrap mini-icn"><img src="LOGO CEE ICN PNG.png" alt="ICN"></div>
+                        </div>
+                        <span class="card-id">N° ${cardNum}</span>
+                    </div>
                 </div>
                 <table>
                     <thead>
