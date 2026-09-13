@@ -20,6 +20,17 @@
             overflow-x: hidden;
         }
 
+        /* Canvas para Confeti Tricolor en pantalla completa */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
         /* Guirnaldas superiores tipo papel picado */
         .garland-banner {
             position: absolute;
@@ -63,7 +74,6 @@
             z-index: 10;
         }
 
-        /* Techo rústico de fonda */
         .container::before {
             content: "";
             position: absolute;
@@ -76,7 +86,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* Encabezado */
         .header {
             display: flex;
             justify-content: space-between;
@@ -121,7 +130,6 @@
             margin: 6px 0 0 0;
         }
 
-        /* Logos BINGO ICT */
         .brand-box {
             display: flex;
             flex-direction: column;
@@ -169,7 +177,6 @@
         .logo-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .logo-icn img { transform: scale(1.42); }
 
-        /* Controles y Rango */
         .config-panel {
             display: flex;
             gap: 15px;
@@ -229,7 +236,6 @@
         }
         .btn-reset:hover { background-color: #002570; transform: translateY(-2px); }
 
-        /* ESCENARIO PRINCIPAL */
         .stage-wrapper {
             display: grid;
             grid-template-columns: 80px 1fr 80px;
@@ -238,7 +244,6 @@
             margin-bottom: 25px;
         }
 
-        /* Columnas laterales de tradiciones */
         .tradition-column {
             display: flex;
             flex-direction: column;
@@ -246,7 +251,6 @@
             align-items: center;
         }
 
-        /* Medallones limpios sin texto */
         .tradition-badge {
             display: flex;
             align-items: center;
@@ -273,7 +277,6 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
         }
 
-        /* Escenario Central */
         .criollo-stage {
             display: flex;
             align-items: center;
@@ -312,7 +315,6 @@
             100% { transform: translateY(-12px) rotate(-6deg) scale(1.05); }
         }
 
-        /* Bola Bandera Chilena */
         .current-ball-wrapper {
             position: relative;
             width: 155px;
@@ -391,7 +393,6 @@
             margin-bottom: 20px;
         }
 
-        /* Historial */
         .history-wrapper { margin-bottom: 25px; }
         .history-wrapper strong { color: #00296b; font-size: 1.05rem; }
         .history-list {
@@ -409,7 +410,6 @@
             font-weight: 600;
         }
 
-        /* Tablero B - I - N - G - O */
         .board-container h3 { color: #00296b; margin-bottom: 15px; }
         .board-bingo {
             display: flex;
@@ -486,6 +486,10 @@
 </head>
 <body>
 
+<!-- Canvas para la lluvia de confeti tricolor -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Banderines dieciocheros -->
 <div class="garland-banner">
     <div class="bunting b-blue"></div>
     <div class="bunting b-white"></div>
@@ -556,10 +560,10 @@
         <button class="btn-reset" onclick="reiniciarJuego()">🔄 Reiniciar Fonda</button>
     </div>
 
-    <!-- ESCENARIO INTEGRADO: MEDALLONES LIMPIOS (SIN TEXTO) -->
+    <!-- ESCENARIO INTEGRADO -->
     <div class="stage-wrapper">
         
-        <!-- LATERAL IZQUIERDO: TROMPO Y EMBOQUE -->
+        <!-- LATERAL IZQUIERDO -->
         <div class="tradition-column">
             <div class="tradition-badge">
                 <svg viewBox="0 0 50 50">
@@ -632,7 +636,7 @@
             </div>
         </div>
 
-        <!-- LATERAL DERECHO: COPIHUE Y EMPANADA -->
+        <!-- LATERAL DERECHO -->
         <div class="tradition-column">
             <div class="tradition-badge">
                 <svg viewBox="0 0 50 50">
@@ -691,23 +695,94 @@
     const btnDraw = document.getElementById('btn-draw');
     const stage = document.getElementById('stage');
 
+    /* MOTOR DE CONFETI TRICOLOR */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    const chileColors = ['#0039a6', '#ffffff', '#d52b1e', '#ffd166']; // Azul, blanco, rojo y toques dorados
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class ConfettiParticle {
+        constructor(x, y, isBigBlast = false) {
+            this.x = x ?? Math.random() * canvas.width;
+            this.y = y ?? (isBigBlast ? canvas.height / 2 : -10);
+            this.size = Math.random() * 8 + 6;
+            this.color = chileColors[Math.floor(Math.random() * chileColors.length)];
+            this.speedX = (Math.random() - 0.5) * (isBigBlast ? 12 : 6);
+            this.speedY = isBigBlast ? (Math.random() * -12 - 4) : (Math.random() * 3 + 2);
+            this.gravity = 0.22;
+            this.rotation = Math.random() * 360;
+            this.rotationSpeed = (Math.random() - 0.5) * 8;
+            this.opacity = 1;
+            this.decay = Math.random() * 0.008 + 0.006;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.speedY += this.gravity;
+            this.y += this.speedY;
+            this.rotation += this.rotationSpeed;
+            this.opacity -= this.decay;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate((this.rotation * Math.PI) / 180);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = Math.max(0, this.opacity);
+            ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6);
+            ctx.restore();
+        }
+    }
+
+    function triggerConfetti(count = 60, isBigBlast = false) {
+        const rect = displayBall.getBoundingClientRect();
+        const originX = rect.left + rect.width / 2;
+        const originY = rect.top + rect.height / 2;
+
+        for (let i = 0; i < count; i++) {
+            confettiParticles.push(new ConfettiParticle(originX, originY, isBigBlast));
+        }
+    }
+
+    function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = confettiParticles.length - 1; i >= 0; i--) {
+            const p = confettiParticles[i];
+            p.update();
+            p.draw();
+            if (p.opacity <= 0 || p.y > canvas.height + 20) {
+                confettiParticles.splice(i, 1);
+            }
+        }
+        requestAnimationFrame(animateConfetti);
+    }
+    animateConfetti();
+
     function playCelebrationSound() {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
-            const ctx = new AudioContext();
+            const audioCtx = new AudioContext();
             const notes = [261.63, 329.63, 392.00, 523.25];
             notes.forEach((freq, idx) => {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
                 osc.type = 'triangle';
                 osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.1);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime + idx * 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.35);
                 osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(ctx.currentTime + idx * 0.1);
-                osc.stop(ctx.currentTime + idx * 0.1 + 0.35);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + idx * 0.1);
+                osc.stop(audioCtx.currentTime + idx * 0.1 + 0.35);
             });
         } catch(e) {}
     }
@@ -837,6 +912,7 @@
         displayBall.classList.add('landed');
 
         playCelebrationSound();
+        triggerConfetti(65, false); // Lanzar confeti tricolor en cada número
 
         setTimeout(() => {
             stage.classList.remove('celebrate');
@@ -853,7 +929,8 @@
             btnDraw.disabled = false;
         } else {
             btnDraw.disabled = true;
-            setTimeout(() => alert('¡Último número cantado! ¡BINGO COMPLETO! ¡Viva Chile!'), 300);
+            triggerConfetti(220, true); // Gran estallido final
+            setTimeout(() => alert('¡Último número cantado! ¡BINGO COMPLETO! ¡Viva Chile!'), 400);
         }
     }
 
