@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* Canvas de Confeti en toda la pantalla */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -31,7 +30,6 @@
             z-index: 9999;
         }
 
-        /* Guirnaldas superiores */
         .garland-banner {
             position: absolute;
             top: 0;
@@ -70,6 +68,7 @@
             border-top: 10px solid #d52b1e;
             border-bottom: 10px solid #0039a6;
             margin-top: 25px;
+            margin-bottom: 50px;
             position: relative;
             z-index: 10;
         }
@@ -473,6 +472,33 @@
             100% { transform: scale(1.05); }
         }
 
+        /* BOTÓN FLOTANTE EN ESQUINA INFERIOR IZQUIERDA */
+        .bottom-left-btn {
+            position: fixed;
+            bottom: 18px;
+            left: 18px;
+            z-index: 1000;
+            background: #ffffff;
+            color: #00296b;
+            border: 2px solid #0039a6;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 13.5px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .bottom-left-btn:hover {
+            background: #0039a6;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 57, 166, 0.4);
+        }
+
         @media (max-width: 820px) {
             .header { flex-direction: column; text-align: center; }
             .stage-wrapper { grid-template-columns: 1fr; }
@@ -487,6 +513,11 @@
 <body>
 
 <canvas id="confetti-canvas"></canvas>
+
+<!-- BOTÓN EN ESQUINA INFERIOR IZQUIERDA -->
+<button class="bottom-left-btn" onclick="generarCartonesPDF()" title="Crear cartones listos para imprimir">
+    <span>🖨️</span> Generar Cartones PDF
+</button>
 
 <div class="garland-banner">
     <div class="bunting b-blue"></div>
@@ -683,7 +714,7 @@
     const btnDraw = document.getElementById('btn-draw');
     const stage = document.getElementById('stage');
 
-    /* MOTOR AVANZADO DE CONFETI PATRIO EN ALTA INTENSIDAD */
+    /* MOTOR DE CONFETI */
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
     let confettiParticles = [];
@@ -703,18 +734,17 @@
             this.size = Math.random() * 9 + 7;
             this.color = chileColors[Math.floor(Math.random() * chileColors.length)];
 
-            // Cálculo balístico con dispersión
             const angleRad = (angleDeg + (Math.random() - 0.5) * 50) * (Math.PI / 180);
             const speed = speedBase * (0.7 + Math.random() * 0.6);
             this.speedX = Math.cos(angleRad) * speed;
             this.speedY = Math.sin(angleRad) * speed;
 
             this.gravity = 0.26;
-            this.drag = 0.985; // Resistencia del aire
+            this.drag = 0.985;
             this.wobble = Math.random() * 10;
             this.wobbleSpeed = 0.08 + Math.random() * 0.06;
             this.opacity = 1;
-            this.decay = Math.random() * 0.005 + 0.004; // Dura bastante más en pantalla
+            this.decay = Math.random() * 0.005 + 0.004;
         }
 
         update() {
@@ -733,7 +763,6 @@
             ctx.rotate(this.wobble);
             ctx.fillStyle = this.color;
             ctx.globalAlpha = Math.max(0, this.opacity);
-            // Efecto de volteo 3D
             const scaleX = Math.cos(this.wobble * 2);
             ctx.scale(scaleX, 1);
             ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.65);
@@ -741,30 +770,23 @@
         }
     }
 
-    // Doble cañón lateral + explosión central masiva
     function triggerConfettiBig() {
         const ballRect = displayBall.getBoundingClientRect();
         const ballX = ballRect.left + ballRect.width / 2;
         const ballY = ballRect.top + ballRect.height / 2;
 
-        // 1. Estallido circular desde la tómbola (120 partículas)
         for (let i = 0; i < 120; i++) {
             const randomAngle = Math.random() * 360;
             confettiParticles.push(new ConfettiParticle(ballX, ballY, randomAngle, 11));
         }
-
-        // 2. Cañón desde la esquina inferior izquierda hacia el centro (60 partículas)
         for (let i = 0; i < 60; i++) {
             confettiParticles.push(new ConfettiParticle(20, window.innerHeight - 20, -55, 20));
         }
-
-        // 3. Cañón desde la esquina inferior derecha hacia el centro (60 partículas)
         for (let i = 0; i < 60; i++) {
             confettiParticles.push(new ConfettiParticle(window.innerWidth - 20, window.innerHeight - 20, -125, 20));
         }
     }
 
-    // Tormenta continua para el final del bingo
     function triggerGrandFinale() {
         let count = 0;
         const blastInterval = setInterval(() => {
@@ -934,7 +956,7 @@
         displayBall.classList.add('landed');
 
         playCelebrationSound();
-        triggerConfettiBig(); // ¡Gran lluvia tricolor de más de 240 papelitos!
+        triggerConfettiBig();
 
         setTimeout(() => {
             stage.classList.remove('celebrate');
@@ -951,7 +973,7 @@
             btnDraw.disabled = false;
         } else {
             btnDraw.disabled = true;
-            triggerGrandFinale(); // Ráfaga prolongada de victoria
+            triggerGrandFinale();
             setTimeout(() => alert('¡Último número cantado! ¡BINGO COMPLETO! ¡Viva Chile!'), 400);
         }
     }
@@ -979,13 +1001,199 @@
         init();
     }
 
+    /* GENERADOR DE CARTONES LISTOS PARA IMPRIMIR O GUARDAR EN PDF */
+    function getRandomSample(arr, size) {
+        let shuffled = [...arr].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, size);
+    }
+
+    function rangeArr(start, end) {
+        let res = [];
+        for (let i = start; i <= end; i++) res.push(i);
+        return res;
+    }
+
+    function generarCartonesPDF() {
+        const countInput = prompt("¿Cuántos cartones deseas generar para imprimir?", "12");
+        if (!countInput) return;
+        const totalCards = parseInt(countInput);
+        if (isNaN(totalCards) || totalCards <= 0) {
+            alert("Por favor ingresa un número válido de cartones.");
+            return;
+        }
+
+        let printWindow = window.open('', '_blank');
+        let html = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Cartones de Bingo ICT - Imprimir / Guardar PDF</title>
+            <style>
+                @page { size: A4 portrait; margin: 8mm; }
+                * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+                body { margin: 0; padding: 0; background: #fff; }
+                .sheet {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: 1fr 1fr;
+                    gap: 8mm;
+                    height: 98vh;
+                    page-break-after: always;
+                }
+                .sheet:last-child { page-break-after: avoid; }
+                .card {
+                    border: 2.5px solid #0039a6;
+                    border-radius: 12px;
+                    padding: 8px 10px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    background: #ffffff;
+                }
+                .card-header {
+                    text-align: center;
+                    border-bottom: 2px solid #d52b1e;
+                    padding-bottom: 4px;
+                    margin-bottom: 4px;
+                    position: relative;
+                }
+                .card-id {
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    font-size: 11px;
+                    font-weight: 800;
+                    color: #64748b;
+                }
+                .card-title {
+                    font-size: 17px;
+                    font-weight: 900;
+                    color: #00296b;
+                    letter-spacing: 1px;
+                }
+                .card-sub {
+                    font-size: 10px;
+                    font-weight: bold;
+                    color: #d52b1e;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th {
+                    background: #0039a6;
+                    color: white;
+                    font-size: 16px;
+                    font-weight: 900;
+                    padding: 4px 0;
+                    border: 1.5px solid #00296b;
+                    width: 20%;
+                }
+                td {
+                    width: 20%;
+                    height: 38px;
+                    text-align: center;
+                    font-size: 16px;
+                    font-weight: 800;
+                    border: 1.5px solid #cbd5e1;
+                    color: #1e293b;
+                }
+                td.free {
+                    background: #fef2f2;
+                    color: #d52b1e;
+                    font-size: 11px;
+                    font-weight: 900;
+                }
+                .card-footer {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 9px;
+                    font-weight: bold;
+                    color: #475569;
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 4px;
+                    margin-top: 4px;
+                }
+            </style>
+        </head>
+        <body>
+        `;
+
+        for (let i = 0; i < totalCards; i++) {
+            if (i % 4 === 0) html += '<div class="sheet">';
+
+            const b = getRandomSample(rangeArr(1, 15), 5);
+            const I = getRandomSample(rangeArr(16, 30), 5);
+            const n = getRandomSample(rangeArr(31, 45), 5);
+            const g = getRandomSample(rangeArr(46, 60), 5);
+            const o = getRandomSample(rangeArr(61, 75), 5);
+
+            const cardNum = String(i + 1).padStart(3, '0');
+
+            html += `
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-id">N° ${cardNum}</span>
+                    <div class="card-title">BINGO ICT 🇨🇱</div>
+                    <div class="card-sub">GRAN FONDA DIECIOCHERA • PUCV</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (let r = 0; r < 5; r++) {
+                html += '<tr>';
+                html += `<td>${b[r]}</td>`;
+                html += `<td>${I[r]}</td>`;
+                if (r === 2) {
+                    html += '<td class="free">★<br>LIBRE</td>';
+                } else {
+                    html += `<td>${n[r]}</td>`;
+                }
+                html += `<td>${g[r]}</td>`;
+                html += `<td>${o[r]}</td>`;
+                html += '</tr>';
+            }
+
+            html += `
+                    </tbody>
+                </table>
+                <div class="card-footer">
+                    <span>CEEITRA • CEE ICC • CEE ICN</span>
+                    <span>¡Tiki Tiki Ti!</span>
+                </div>
+            </div>
+            `;
+
+            if (i % 4 === 3 || i === totalCards - 1) {
+                html += '</div>';
+            }
+        }
+
+        html += `
+        <script>
+            window.onload = function() {
+                window.print();
+            }
+        <\/script>
+        </body>
+        </html>
+        `;
+
+        printWindow.document.open();
+        printWindow.document.write(html);
+        printWindow.document.close();
+    }
+
     inputMin.addEventListener('change', init);
     inputMax.addEventListener('change', init);
 
     init();
 </script>
 
-</body>
-</html>
 </body>
 </html>
