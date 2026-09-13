@@ -10,7 +10,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            /* Fondo con tonos patrios y patrón suave */
             background: linear-gradient(135deg, #0b2545 0%, #134074 40%, #8d0801 100%);
             min-height: 100vh;
             margin: 0;
@@ -20,7 +19,6 @@
             position: relative;
         }
         
-        /* Banderines dieciocheros superiores decorativos */
         body::before {
             content: "🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱";
             position: absolute;
@@ -33,7 +31,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 960px;
             width: 100%;
             background: #ffffff;
             border-radius: 16px;
@@ -44,7 +42,7 @@
             margin-top: 25px;
         }
 
-        /* Encabezado con título y logos a la derecha */
+        /* Header con logos */
         .header {
             display: flex;
             justify-content: space-between;
@@ -70,7 +68,6 @@
             margin: 5px 0 0 0;
         }
 
-        /* Caja de Logos BINGO ICT arriba a la derecha */
         .brand-box {
             display: flex;
             flex-direction: column;
@@ -99,7 +96,6 @@
             align-items: center;
         }
 
-        /* Contenedores circulares con tamaño unificado */
         .logo-wrapper {
             width: 58px;
             height: 58px;
@@ -125,12 +121,11 @@
             display: block;
         }
 
-        /* Ajuste específico para el logo ICN: compensa los márgenes vacíos de la imagen */
         .logo-icn img {
             transform: scale(1.42);
         }
 
-        /* Panel de Rango */
+        /* Configuración */
         .config-panel {
             display: flex;
             gap: 15px;
@@ -164,7 +159,7 @@
             display: flex;
             justify-content: center;
             gap: 18px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         button {
@@ -209,66 +204,65 @@
             transform: translateY(-2px);
         }
 
-        /* Bola de Bingo con Animaciones */
+        /* Bola Actual */
         .display-box {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 20px;
         }
 
         .current-ball {
             display: inline-flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #ff4d6d, #800f2f 85%);
             color: white;
-            font-size: 58px;
-            font-weight: 900;
-            border: 4px solid #fff;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.4);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 5px solid #fff;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.4);
             user-select: none;
         }
 
-        /* Animación durante la tómbola / giro */
+        .current-letter {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1;
+            color: #ffd166;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .current-num {
+            font-size: 54px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
         .current-ball.spinning {
             animation: tombolaRoll 0.15s infinite alternate ease-in-out;
             border-color: #ffd166;
-            color: #fff3b0;
-            box-shadow: 0 0 25px rgba(255, 209, 102, 0.8);
+            box-shadow: 0 0 25px rgba(255, 209, 102, 0.85);
         }
 
-        /* Animación cuando se devela el número ganador */
         .current-ball.landed {
             animation: ballPop 0.6s ease-out;
         }
 
         @keyframes tombolaRoll {
-            0% {
-                transform: scale(0.95) rotate(-6deg) translateY(-2px);
-            }
-            100% {
-                transform: scale(1.05) rotate(6deg) translateY(2px);
-            }
+            0% { transform: scale(0.95) rotate(-6deg); }
+            100% { transform: scale(1.05) rotate(6deg); }
         }
 
         @keyframes ballPop {
-            0% {
-                transform: scale(0.5) rotate(-20deg);
-                opacity: 0.6;
-            }
-            50% {
-                transform: scale(1.25) rotate(5deg);
-            }
-            75% {
-                transform: scale(0.95);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
+            0% { transform: scale(0.5) rotate(-15deg); opacity: 0.6; }
+            50% { transform: scale(1.22) rotate(4deg); }
+            75% { transform: scale(0.95); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         .stats {
@@ -279,7 +273,7 @@
             margin-bottom: 20px;
         }
 
-        /* Historial y Tablero */
+        /* Historial */
         .history-wrapper {
             margin-bottom: 25px;
         }
@@ -298,29 +292,56 @@
             font-size: 16px;
             color: #1e293b;
             min-height: 48px;
-            max-height: 110px;
+            max-height: 100px;
             overflow-y: auto;
             word-break: break-word;
+            font-weight: 600;
         }
 
+        /* Tablero Organizado por Columnas B - I - N - G - O */
         .board-container h3 {
             color: #00296b;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 15px;
         }
 
-        .board {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
-            gap: 8px;
+        .board-bingo {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             background: #f1f5f9;
-            padding: 16px;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            max-height: 280px;
-            overflow-y: auto;
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px solid #cbd5e1;
+        }
+
+        .bingo-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Letra B-I-N-G-O a la izquierda */
+        .bingo-header-cell {
+            width: 50px;
+            height: 44px;
+            background: #00296b;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        /* Contenedor de las casillas numéricas de cada letra */
+        .bingo-numbers-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+            gap: 6px;
+            flex-grow: 1;
         }
 
         .ball-slot {
@@ -331,25 +352,25 @@
             background: #ffffff;
             color: #94a3b8;
             font-weight: bold;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            font-size: 14px;
             border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
 
         .ball-slot.called {
-            background: #00509d;
+            background: #d90429;
             color: white;
-            border-color: #003f7a;
+            border-color: #a0021e;
             font-weight: 800;
-            transform: scale(1.04);
-            box-shadow: 0 2px 5px rgba(0, 80, 157, 0.3);
-            animation: slotFlash 0.5s ease-out;
+            box-shadow: 0 2px 6px rgba(217, 4, 41, 0.4);
+            transform: scale(1.05);
+            animation: slotPop 0.4s ease-out;
         }
 
-        @keyframes slotFlash {
-            0% { background: #d90429; transform: scale(1.3); }
-            100% { background: #00509d; transform: scale(1.04); }
+        @keyframes slotPop {
+            0% { transform: scale(1.3); background: #ffd166; color: #000; }
+            100% { transform: scale(1.05); }
         }
 
         @media (max-width: 650px) {
@@ -360,13 +381,17 @@
             .brand-box {
                 margin-top: 10px;
             }
+            .bingo-header-cell {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Encabezado con Logos BINGO ICT a la derecha -->
     <header class="header">
         <div class="title-section">
             <h1>¡Gran Bingo Dieciochero! 🇨🇱</h1>
@@ -389,23 +414,26 @@
         </div>
     </header>
 
-    <!-- Horizonte / Rango de números -->
+    <!-- Horizonte / Rango -->
     <div class="config-panel">
         <label for="min-num">Desde:</label>
         <input type="number" id="min-num" value="1" min="1">
         <label for="max-num">Hasta:</label>
-        <input type="number" id="max-num" value="75" min="1">
+        <input type="number" id="max-num" value="75" min="5">
     </div>
 
-    <!-- Botones de Acción -->
+    <!-- Acciones -->
     <div class="actions">
         <button id="btn-draw" class="btn-draw" onclick="sacarNumero()">🎲 ¡Cantar Número!</button>
         <button class="btn-reset" onclick="reiniciarJuego()">🔄 Reiniciar Bingo</button>
     </div>
 
-    <!-- Bola Actual Animada -->
+    <!-- Bola Actual con Letra y Número -->
     <div class="display-box">
-        <div id="current-ball" class="current-ball">-</div>
+        <div id="current-ball" class="current-ball">
+            <span class="current-letter" id="current-letter">-</span>
+            <span class="current-num" id="current-num">-</span>
+        </div>
     </div>
 
     <div class="stats" id="stats">
@@ -418,10 +446,10 @@
         <div class="history-list" id="history">Aún no se han sacado números. ¡A empezar la fonda!</div>
     </div>
 
-    <!-- Tablero con todos los números -->
+    <!-- Tablero por Letras B - I - N - G - O -->
     <div class="board-container">
-        <h3>📍 Tablero General</h3>
-        <div class="board" id="board"></div>
+        <h3>📍 Tablero B - I - N - G - O</h3>
+        <div class="board-bingo" id="board"></div>
     </div>
 </div>
 
@@ -430,15 +458,38 @@
     let max = 75;
     let availableNumbers = [];
     let calledNumbers = [];
-    let isRolling = false; // Bandera para evitar doble clic durante animación
+    let isRolling = false;
 
     const inputMin = document.getElementById('min-num');
     const inputMax = document.getElementById('max-num');
     const displayBall = document.getElementById('current-ball');
+    const displayLetter = document.getElementById('current-letter');
+    const displayNum = document.getElementById('current-num');
     const stats = document.getElementById('stats');
     const historyBox = document.getElementById('history');
     const board = document.getElementById('board');
     const btnDraw = document.getElementById('btn-draw');
+
+    // Función para obtener la letra B-I-N-G-O según el número
+    function getBingoLetter(num) {
+        // Formato estándar (1-75)
+        if (min === 1 && max === 75) {
+            if (num <= 15) return 'B';
+            if (num <= 30) return 'I';
+            if (num <= 45) return 'N';
+            if (num <= 60) return 'G';
+            return 'O';
+        }
+        // Distribución proporcional si el usuario cambia el rango
+        const total = max - min + 1;
+        const segment = total / 5;
+        const offset = num - min;
+        if (offset < segment) return 'B';
+        if (offset < segment * 2) return 'I';
+        if (offset < segment * 3) return 'N';
+        if (offset < segment * 4) return 'G';
+        return 'O';
+    }
 
     function init() {
         min = parseInt(inputMin.value) || 1;
@@ -446,8 +497,8 @@
 
         if (min >= max) {
             alert('El número inicial debe ser menor que el final.');
-            inputMax.value = min + 1;
-            max = min + 1;
+            inputMax.value = min + 5;
+            max = min + 5;
         }
 
         availableNumbers = [];
@@ -462,26 +513,49 @@
         btnDraw.disabled = false;
         
         displayBall.className = 'current-ball';
-        displayBall.textContent = "-";
+        displayLetter.textContent = "-";
+        displayNum.textContent = "-";
 
         actualizarStats();
-        generarTablero();
+        generarTableroBingo();
         actualizarHistorial();
     }
 
-    function generarTablero() {
+    function generarTableroBingo() {
         board.innerHTML = '';
-        for (let i = min; i <= max; i++) {
-            const slot = document.createElement('div');
-            slot.classList.add('ball-slot');
-            slot.id = `slot-${i}`;
-            slot.textContent = i;
-            board.appendChild(slot);
-        }
+        const letters = ['B', 'I', 'N', 'G', 'O'];
+
+        letters.forEach(letter => {
+            const row = document.createElement('div');
+            row.classList.add('bingo-row');
+
+            // Celda de la letra
+            const letterCell = document.createElement('div');
+            letterCell.classList.add('bingo-header-cell');
+            letterCell.textContent = letter;
+            row.appendChild(letterCell);
+
+            // Contenedor de casillas de esa letra
+            const numbersRow = document.createElement('div');
+            numbersRow.classList.add('bingo-numbers-row');
+
+            for (let i = min; i <= max; i++) {
+                if (getBingoLetter(i) === letter) {
+                    const slot = document.createElement('div');
+                    slot.classList.add('ball-slot');
+                    slot.id = `slot-${i}`;
+                    slot.textContent = i;
+                    numbersRow.appendChild(slot);
+                }
+            }
+
+            row.appendChild(numbersRow);
+            board.appendChild(row);
+        });
     }
 
     function sacarNumero() {
-        if (isRolling) return; // Bloquear si ya está animando
+        if (isRolling) return;
 
         if (availableNumbers.length === 0) {
             alert('¡Ya han salido todos los números! ¡Hay cartón lleno!');
@@ -493,20 +567,17 @@
         inputMin.disabled = true;
         inputMax.disabled = true;
 
-        // Iniciar animación visual en la bola
         displayBall.classList.remove('landed');
         displayBall.classList.add('spinning');
 
-        // Ruleta rápida de números
-        let rollDuration = 1400; // Duración total en ms (1.4 segundos)
+        let rollDuration = 1400;
         let startTime = Date.now();
 
         let interval = setInterval(() => {
-            // Mostrar números aleatorios provisionales en pantalla
             const tempNumber = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
-            displayBall.textContent = tempNumber;
+            displayLetter.textContent = getBingoLetter(tempNumber);
+            displayNum.textContent = tempNumber;
 
-            // Al finalizar el tiempo, extraer el número definitivo
             if (Date.now() - startTime >= rollDuration) {
                 clearInterval(interval);
                 finalizarSorteo();
@@ -517,27 +588,28 @@
     function finalizarSorteo() {
         const randomIndex = Math.floor(Math.random() * availableNumbers.length);
         const numero = availableNumbers.splice(randomIndex, 1)[0];
-        calledNumbers.push(numero);
+        const letra = getBingoLetter(numero);
 
-        // Detener animación de giro y activar animación de impacto
+        calledNumbers.push({ letra, numero });
+
         displayBall.classList.remove('spinning');
-        displayBall.textContent = numero;
+        displayLetter.textContent = letra;
+        displayNum.textContent = numero;
         displayBall.classList.add('landed');
 
-        // Iluminar en el tablero
+        // Iluminar la casilla correspondiente
         const slot = document.getElementById(`slot-${numero}`);
         if (slot) slot.classList.add('called');
 
         actualizarHistorial();
         actualizarStats();
 
-        // Reactivar controles
         isRolling = false;
         if (availableNumbers.length > 0) {
             btnDraw.disabled = false;
         } else {
             btnDraw.disabled = true;
-            setTimeout(() => alert('¡Último número cantado! Fin del bingo.'), 300);
+            setTimeout(() => alert('¡Último número cantado! ¡BINGO COMPLETO!'), 300);
         }
     }
 
@@ -550,14 +622,14 @@
         if (calledNumbers.length === 0) {
             historyBox.textContent = 'Aún no se han sacado números. ¡A empezar la fonda!';
         } else {
-            historyBox.textContent = calledNumbers.join(' - ');
+            historyBox.textContent = calledNumbers.map(item => `${item.letra}-${item.numero}`).join(' • ');
         }
     }
 
     function reiniciarJuego() {
         if (isRolling) return;
         if (calledNumbers.length > 0) {
-            if (!confirm('¿Seguro que quieres reiniciar la partida?')) {
+            if (!confirm('¿Seguro que quieres reiniciar la partida? Se borrarán los números cantados.')) {
                 return;
             }
         }
