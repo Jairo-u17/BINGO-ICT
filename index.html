@@ -209,7 +209,7 @@
             transform: translateY(-2px);
         }
 
-        /* Bola de Bingo estilo patrio */
+        /* Bola de Bingo con Animaciones */
         .display-box {
             text-align: center;
             margin-bottom: 20px;
@@ -228,6 +228,47 @@
             font-weight: 900;
             border: 4px solid #fff;
             box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.4);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+        }
+
+        /* Animación durante la tómbola / giro */
+        .current-ball.spinning {
+            animation: tombolaRoll 0.15s infinite alternate ease-in-out;
+            border-color: #ffd166;
+            color: #fff3b0;
+            box-shadow: 0 0 25px rgba(255, 209, 102, 0.8);
+        }
+
+        /* Animación cuando se devela el número ganador */
+        .current-ball.landed {
+            animation: ballPop 0.6s ease-out;
+        }
+
+        @keyframes tombolaRoll {
+            0% {
+                transform: scale(0.95) rotate(-6deg) translateY(-2px);
+            }
+            100% {
+                transform: scale(1.05) rotate(6deg) translateY(2px);
+            }
+        }
+
+        @keyframes ballPop {
+            0% {
+                transform: scale(0.5) rotate(-20deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.25) rotate(5deg);
+            }
+            75% {
+                transform: scale(0.95);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
         }
 
         .stats {
@@ -303,6 +344,12 @@
             font-weight: 800;
             transform: scale(1.04);
             box-shadow: 0 2px 5px rgba(0, 80, 157, 0.3);
+            animation: slotFlash 0.5s ease-out;
+        }
+
+        @keyframes slotFlash {
+            0% { background: #d90429; transform: scale(1.3); }
+            100% { background: #00509d; transform: scale(1.04); }
         }
 
         @media (max-width: 650px) {
@@ -335,7 +382,6 @@
                 <div class="logo-wrapper" title="CEE ICC">
                     <img src="LOGO ICC.png" alt="Logo ICC">
                 </div>
-                <!-- Contenedor con zoom interno para nivelar el tamaño -->
                 <div class="logo-wrapper logo-icn" title="CEE ICN">
                     <img src="LOGO CEE ICN PNG.png" alt="Logo CEE ICN">
                 </div>
@@ -357,13 +403,13 @@
         <button class="btn-reset" onclick="reiniciarJuego()">🔄 Reiniciar Bingo</button>
     </div>
 
-    <!-- Bola Actual -->
+    <!-- Bola Actual Animada -->
     <div class="display-box">
         <div id="current-ball" class="current-ball">-</div>
     </div>
 
     <div class="stats" id="stats">
-        Números extraídos: 0 / 75
+        Números cantados: 0 / 75
     </div>
 
     <!-- Historial en orden de salida -->
@@ -384,6 +430,7 @@
     let max = 75;
     let availableNumbers = [];
     let calledNumbers = [];
+    let isRolling = false; // Bandera para evitar doble clic durante animación
 
     const inputMin = document.getElementById('min-num');
     const inputMax = document.getElementById('max-num');
@@ -409,9 +456,12 @@
             availableNumbers.push(i);
         }
 
+        isRolling = false;
         inputMin.disabled = false;
         inputMax.disabled = false;
         btnDraw.disabled = false;
+        
+        displayBall.className = 'current-ball';
         displayBall.textContent = "-";
 
         actualizarStats();
@@ -431,30 +481,63 @@
     }
 
     function sacarNumero() {
+        if (isRolling) return; // Bloquear si ya está animando
+
         if (availableNumbers.length === 0) {
             alert('¡Ya han salido todos los números! ¡Hay cartón lleno!');
             return;
         }
 
+        isRolling = true;
+        btnDraw.disabled = true;
         inputMin.disabled = true;
         inputMax.disabled = true;
 
+        // Iniciar animación visual en la bola
+        displayBall.classList.remove('landed');
+        displayBall.classList.add('spinning');
+
+        // Ruleta rápida de números
+        let rollDuration = 1400; // Duración total en ms (1.4 segundos)
+        let startTime = Date.now();
+
+        let interval = setInterval(() => {
+            // Mostrar números aleatorios provisionales en pantalla
+            const tempNumber = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+            displayBall.textContent = tempNumber;
+
+            // Al finalizar el tiempo, extraer el número definitivo
+            if (Date.now() - startTime >= rollDuration) {
+                clearInterval(interval);
+                finalizarSorteo();
+            }
+        }, 60);
+    }
+
+    function finalizarSorteo() {
         const randomIndex = Math.floor(Math.random() * availableNumbers.length);
         const numero = availableNumbers.splice(randomIndex, 1)[0];
-
         calledNumbers.push(numero);
 
+        // Detener animación de giro y activar animación de impacto
+        displayBall.classList.remove('spinning');
         displayBall.textContent = numero;
-        
+        displayBall.classList.add('landed');
+
+        // Iluminar en el tablero
         const slot = document.getElementById(`slot-${numero}`);
         if (slot) slot.classList.add('called');
 
         actualizarHistorial();
         actualizarStats();
 
-        if (availableNumbers.length === 0) {
+        // Reactivar controles
+        isRolling = false;
+        if (availableNumbers.length > 0) {
+            btnDraw.disabled = false;
+        } else {
             btnDraw.disabled = true;
-            setTimeout(() => alert('¡Último número cantado! Fin del bingo.'), 150);
+            setTimeout(() => alert('¡Último número cantado! Fin del bingo.'), 300);
         }
     }
 
@@ -472,6 +555,7 @@
     }
 
     function reiniciarJuego() {
+        if (isRolling) return;
         if (calledNumbers.length > 0) {
             if (!confirm('¿Seguro que quieres reiniciar la partida?')) {
                 return;
