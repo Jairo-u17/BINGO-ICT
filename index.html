@@ -231,7 +231,7 @@
             transform: translateY(-2px);
         }
 
-        /* ZONA CENTRAL: Huaso + Bola + Copihue */
+        /* ZONA CENTRAL: Huaso + Bola Bandera + Copihue */
         .stage-area {
             display: flex;
             align-items: center;
@@ -274,50 +274,117 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
         }
 
-        /* Bola de Bingo */
-        .current-ball {
-            display: inline-flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 145px;
-            height: 145px;
+        /* BOLA / TÓMBOLA CON LA BANDERA CHILENA */
+        .current-ball-wrapper {
+            position: relative;
+            width: 155px;
+            height: 155px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #ff4d6d, #800f2f 85%);
-            color: white;
-            border: 5px solid #fff;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45);
             user-select: none;
+            overflow: hidden;
+            border: 5px solid #ffffff;
+            transition: transform 0.2s;
+        }
+
+        /* Fondo de la Bandera Chilena */
+        .flag-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Cuadrante azul con estrella */
+        .flag-blue {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 50%;
+            background-color: #0039a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .star-svg {
+            width: 28px;
+            height: 28px;
+            fill: #ffffff;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+        }
+
+        /* Franja blanca superior derecha */
+        .flag-white {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 50%;
+            background-color: #ffffff;
+        }
+
+        /* Franja roja inferior completa */
+        .flag-red {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #d52b1e;
+        }
+
+        /* Contenido central de texto con vidrio traslúcido para máxima legibilidad */
+        .ball-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 110px;
+            height: 110px;
+            background: rgba(11, 37, 69, 0.88);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
         }
 
         .current-letter {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 900;
             letter-spacing: 2px;
             line-height: 1;
             color: #ffd166;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
         }
 
         .current-num {
-            font-size: 58px;
+            font-size: 52px;
             font-weight: 900;
             line-height: 1;
+            color: #ffffff;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
         }
 
-        .current-ball.spinning {
+        /* Animaciones */
+        .current-ball-wrapper.spinning {
             animation: tombolaRoll 0.15s infinite alternate ease-in-out;
+            box-shadow: 0 0 30px rgba(255, 209, 102, 0.9);
             border-color: #ffd166;
-            box-shadow: 0 0 25px rgba(255, 209, 102, 0.85);
         }
 
-        .current-ball.landed {
+        .current-ball-wrapper.landed {
             animation: ballPop 0.6s ease-out;
         }
 
         @keyframes tombolaRoll {
-            0% { transform: scale(0.95) rotate(-6deg); }
-            100% { transform: scale(1.05) rotate(6deg); }
+            0% { transform: scale(0.95) rotate(-8deg); }
+            100% { transform: scale(1.05) rotate(8deg); }
         }
 
         @keyframes ballPop {
@@ -327,7 +394,7 @@
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
-        /* Copihue SVG a la derecha */
+        /* Copihue Chileno */
         .copihue-box {
             display: flex;
             flex-direction: column;
@@ -336,8 +403,8 @@
         }
 
         .copihue-svg {
-            width: 75px;
-            height: 110px;
+            width: 80px;
+            height: 120px;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
             transform-origin: top center;
             animation: swayFlower 2.5s ease-in-out infinite alternate;
@@ -346,13 +413,6 @@
         @keyframes swayFlower {
             0% { transform: rotate(-5deg); }
             100% { transform: rotate(7deg); }
-        }
-
-        .copihue-label {
-            font-size: 0.85rem;
-            color: #b00320;
-            font-weight: bold;
-            margin-top: 4px;
         }
 
         .stats {
@@ -475,14 +535,18 @@
             }
             .copihue-svg {
                 width: 55px;
-                height: 80px;
+                height: 85px;
             }
-            .current-ball {
-                width: 120px;
-                height: 120px;
+            .current-ball-wrapper {
+                width: 130px;
+                height: 130px;
+            }
+            .ball-content {
+                width: 92px;
+                height: 92px;
             }
             .current-num {
-                font-size: 44px;
+                font-size: 42px;
             }
         }
     </style>
@@ -496,21 +560,17 @@
 <div class="container">
     <header class="header">
         <div class="title-section">
-            <!-- Volantín tradicional Chileno SVG -->
+            <!-- Volantín chileno -->
             <svg class="volantin-icon" viewBox="0 0 100 100">
-                <!-- Marco en rombo -->
                 <g transform="rotate(45 50 50)">
                     <rect x="20" y="20" width="30" height="30" fill="#00509d"/>
                     <rect x="50" y="20" width="30" height="30" fill="#ffffff"/>
                     <rect x="20" y="50" width="30" height="30" fill="#d90429"/>
                     <rect x="50" y="50" width="30" height="30" fill="#00509d"/>
-                    <!-- Maderos del volantín -->
                     <line x1="20" y1="50" x2="80" y2="50" stroke="#ffd166" stroke-width="2"/>
                     <line x1="50" y1="20" x2="50" y2="80" stroke="#ffd166" stroke-width="2"/>
-                    <!-- Estrella blanca -->
                     <polygon points="35,28 37,33 42,33 38,36 40,41 35,38 30,41 32,36 28,33 33,33" fill="#ffffff"/>
                 </g>
-                <!-- Cola del volantín -->
                 <path d="M50,85 Q60,92 52,98 Q45,103 55,108" fill="none" stroke="#d90429" stroke-width="2.5"/>
             </svg>
 
@@ -550,80 +610,70 @@
         <button class="btn-reset" onclick="reiniciarJuego()">🔄 Reiniciar Bingo</button>
     </div>
 
-    <!-- ESCENARIO CENTRAL: HUASO, BOLA Y COPIHUE -->
+    <!-- ESCENARIO CENTRAL: HUASO + TÓMBOLA BANDERA CHILENA + COPIHUE -->
     <div class="stage-area">
         <!-- Huaso animado -->
         <div class="character-box" id="huaso-box">
             <svg class="huaso-svg" viewBox="0 0 120 150">
-                <!-- Chupalla / Sombrero de huaso -->
                 <ellipse cx="60" cy="38" rx="46" ry="10" fill="#5c4033"/>
                 <ellipse cx="60" cy="38" rx="44" ry="8" fill="#d4a373"/>
                 <path d="M42,36 C42,20 78,20 78,36 Z" fill="#5c4033"/>
                 <rect x="42" y="32" width="36" height="4" fill="#d90429"/>
 
-                <!-- Cabeza y rostro alegre -->
                 <circle cx="60" cy="52" r="17" fill="#fcd5b5"/>
-                <!-- Ojos -->
                 <circle cx="54" cy="50" r="2.2" fill="#2d3748"/>
                 <circle cx="66" cy="50" r="2.2" fill="#2d3748"/>
-                <!-- Bigote típico de huaso -->
                 <path d="M52,58 Q60,56 68,58 Q60,63 52,58" fill="#4a3525"/>
-                <!-- Sonrisa -->
                 <path d="M55,61 Q60,67 65,61" fill="none" stroke="#b00320" stroke-width="1.8" stroke-linecap="round"/>
-                <!-- Mejillas coloradas -->
                 <circle cx="50" cy="54" r="3" fill="#ff758f" opacity="0.6"/>
                 <circle cx="70" cy="54" r="3" fill="#ff758f" opacity="0.6"/>
 
-                <!-- Manta de huaso chilena tradicional -->
                 <path d="M35,68 L85,68 L98,125 L22,125 Z" fill="#00509d"/>
-                <!-- Franjas de la manta -->
                 <path d="M42,68 L36,125 L46,125 L50,68 Z" fill="#d90429"/>
                 <path d="M58,68 L56,125 L64,125 L62,68 Z" fill="#ffffff"/>
                 <path d="M70,68 L74,125 L84,125 L78,68 Z" fill="#d90429"/>
-                <!-- Flecos de la manta -->
                 <line x1="22" y1="125" x2="98" y2="125" stroke="#ffd166" stroke-width="3" stroke-dasharray="2,2"/>
 
-                <!-- Pañuelo de cueca blanco en mano -->
                 <path d="M88,88 Q106,75 102,95 Q95,90 88,95 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
             </svg>
             
-            <!-- Empanada criolla SVG -->
             <svg class="empanada-icon" viewBox="0 0 60 40" title="¡Rica empaná de pino!">
                 <path d="M6,30 Q30,4 54,30 Q30,35 6,30 Z" fill="#e09f3e" stroke="#bc6c25" stroke-width="2"/>
-                <!-- Repulgue de empanada -->
                 <path d="M8,30 Q12,27 16,30 Q20,27 24,30 Q28,27 32,30 Q36,27 40,30 Q44,27 48,30 Q52,27 54,30" fill="none" stroke="#99582a" stroke-width="2"/>
             </svg>
         </div>
 
-        <!-- Bola de Bingo Central -->
-        <div class="display-box">
-            <div id="current-ball" class="current-ball">
+        <!-- TÓMBOLA CON DISEÑO DE LA BANDERA CHILENA -->
+        <div class="current-ball-wrapper" id="current-ball">
+            <div class="flag-bg">
+                <div class="flag-blue">
+                    <!-- Estrella blanca -->
+                    <svg class="star-svg" viewBox="0 0 24 24">
+                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                    </svg>
+                </div>
+                <div class="flag-white"></div>
+                <div class="flag-red"></div>
+            </div>
+            
+            <!-- Ventana central para el número y letra -->
+            <div class="ball-content">
                 <span class="current-letter" id="current-letter">-</span>
                 <span class="current-num" id="current-num">-</span>
             </div>
         </div>
 
-        <!-- Copihue Chileno decorativo -->
+        <!-- Copihue Chileno -->
         <div class="copihue-box">
             <svg class="copihue-svg" viewBox="0 0 80 120">
-                <!-- Tallo y hojas del copihue -->
                 <path d="M40,5 Q42,30 40,45" fill="none" stroke="#2d6a4f" stroke-width="3.5" stroke-linecap="round"/>
-                <!-- Hoja izquierda -->
                 <path d="M38,15 Q18,12 22,25 Q32,26 38,20" fill="#40916c"/>
-                <!-- Hoja derecha -->
                 <path d="M41,25 Q58,22 55,35 Q45,36 41,30" fill="#40916c"/>
-                
-                <!-- Cáliz verde -->
                 <path d="M32,44 C34,38 46,38 48,44 C48,50 32,50 32,44 Z" fill="#1b4332"/>
-                
-                <!-- Pétalos acampanados del copihue rojo -->
                 <path d="M32,47 C28,70 24,95 33,105 C37,100 38,80 40,65 C42,80 43,100 47,105 C56,95 52,70 48,47 Z" fill="#d90429"/>
-                <!-- Sombreado y pliegues internos -->
                 <path d="M36,50 C34,75 33,95 40,108 C47,95 46,75 44,50 Z" fill="#ef233c"/>
-                <!-- Pistilo amarillo asomándose -->
                 <ellipse cx="40" cy="110" rx="2.5" ry="4" fill="#ffd166"/>
             </svg>
-            <span class="copihue-label">Flor Nacional</span>
         </div>
     </div>
 
@@ -701,7 +751,7 @@
         inputMax.disabled = false;
         btnDraw.disabled = false;
         
-        displayBall.className = 'current-ball';
+        displayBall.className = 'current-ball-wrapper';
         displayLetter.textContent = "-";
         displayNum.textContent = "-";
         huasoBox.classList.remove('celebrate');
@@ -757,7 +807,7 @@
 
         displayBall.classList.remove('landed');
         displayBall.classList.add('spinning');
-        huasoBox.classList.add('celebrate'); // El huaso empieza a bailar
+        huasoBox.classList.add('celebrate');
 
         let rollDuration = 1400;
         let startTime = Date.now();
@@ -786,7 +836,6 @@
         displayNum.textContent = numero;
         displayBall.classList.add('landed');
 
-        // Detener baile del huaso tras un breve instante
         setTimeout(() => {
             huasoBox.classList.remove('celebrate');
         }, 1200);
