@@ -714,7 +714,6 @@
     const btnDraw = document.getElementById('btn-draw');
     const stage = document.getElementById('stage');
 
-    /* MOTOR DE CONFETI */
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
     let confettiParticles = [];
@@ -1075,7 +1074,7 @@
         return res;
     }
 
-    /* GENERADOR DE CARTONES CON LOGOS INCORPORADOS */
+    /* GENERADOR CON LOGOS EN LA FRANJA CENTRAL */
     function generarCartonesPDF() {
         const countInput = prompt("¿Cuántos cartones deseas generar para imprimir?", "12");
         if (!countInput) return;
@@ -1108,7 +1107,7 @@
                 .card {
                     border: 2.5px solid #0039a6;
                     border-radius: 12px;
-                    padding: 8px 10px;
+                    padding: 10px;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
@@ -1117,16 +1116,16 @@
                 .card-header {
                     display: flex;
                     justify-content: space-between;
-                    align-items: center;
+                    align-items: flex-start;
                     border-bottom: 2px solid #d52b1e;
                     padding-bottom: 4px;
-                    margin-bottom: 4px;
+                    margin-bottom: 6px;
                 }
                 .card-brand {
                     text-align: left;
                 }
                 .card-title {
-                    font-size: 16px;
+                    font-size: 17px;
                     font-weight: 900;
                     color: #00296b;
                     letter-spacing: 0.5px;
@@ -1136,43 +1135,62 @@
                     font-size: 9.5px;
                     font-weight: bold;
                     color: #d52b1e;
+                    margin-top: 2px;
                 }
-                .card-header-right {
+                .card-id {
+                    font-size: 13px;
+                    font-weight: 900;
+                    color: #00296b;
+                    background: #e2e8f0;
+                    padding: 2px 7px;
+                    border-radius: 6px;
+                }
+                
+                /* FRANJA DE LOGOS CENTRADA QUE RELLENA EL ESPACIO BLANCO */
+                .logos-banner {
                     display: flex;
+                    justify-content: space-evenly;
                     align-items: center;
-                    gap: 6px;
+                    padding: 6px 10px;
+                    margin-bottom: 6px;
+                    background: #f8fafc;
+                    border-radius: 10px;
+                    border: 1px solid #e2e8f0;
                 }
-                .mini-logos {
+                .logo-item {
                     display: flex;
-                    gap: 4px;
+                    flex-direction: column;
                     align-items: center;
+                    gap: 2px;
                 }
-                .mini-logo-wrap {
-                    width: 28px;
-                    height: 28px;
+                .logo-item-wrap {
+                    width: 58px;
+                    height: 58px;
                     border-radius: 50%;
-                    border: 1.5px solid #0039a6;
+                    border: 2px solid #0039a6;
                     overflow: hidden;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     background: #fff;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
                 }
-                .mini-logo-wrap img {
+                .logo-item-wrap img {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
                     display: block;
                 }
-                .mini-icn img {
+                .icn-zoom img {
                     transform: scale(1.42);
                 }
-                .card-id {
-                    font-size: 11px;
-                    font-weight: 900;
-                    color: #64748b;
-                    margin-left: 2px;
+                .logo-label {
+                    font-size: 8px;
+                    font-weight: 800;
+                    color: #00296b;
+                    letter-spacing: 0.5px;
                 }
+
                 table {
                     width: 100%;
                     border-collapse: collapse;
@@ -1180,7 +1198,7 @@
                 th {
                     background: #0039a6;
                     color: white;
-                    font-size: 16px;
+                    font-size: 15px;
                     font-weight: 900;
                     padding: 4px 0;
                     border: 1.5px solid #00296b;
@@ -1188,9 +1206,9 @@
                 }
                 td {
                     width: 20%;
-                    height: 38px;
+                    height: 35px;
                     text-align: center;
-                    font-size: 16px;
+                    font-size: 15px;
                     font-weight: 800;
                     border: 1.5px solid #cbd5e1;
                     color: #1e293b;
@@ -1198,7 +1216,7 @@
                 td.free {
                     background: #fef2f2;
                     color: #d52b1e;
-                    font-size: 11px;
+                    font-size: 10px;
                     font-weight: 900;
                 }
                 .card-footer {
@@ -1209,7 +1227,7 @@
                     color: #475569;
                     border-top: 1px solid #e2e8f0;
                     padding-top: 4px;
-                    margin-top: 4px;
+                    margin-top: 5px;
                 }
             </style>
         </head>
@@ -1234,15 +1252,25 @@
                         <div class="card-title">BINGO ICT 🇨🇱</div>
                         <div class="card-sub">GRAN FONDA DIECIOCHERA • PUCV</div>
                     </div>
-                    <div class="card-header-right">
-                        <div class="mini-logos">
-                            <div class="mini-logo-wrap"><img src="Logo ICTRA.png" alt="ICTRA"></div>
-                            <div class="mini-logo-wrap"><img src="LOGO ICC.png" alt="ICC"></div>
-                            <div class="mini-logo-wrap mini-icn"><img src="LOGO CEE ICN PNG.png" alt="ICN"></div>
-                        </div>
-                        <span class="card-id">N° ${cardNum}</span>
+                    <span class="card-id">N° ${cardNum}</span>
+                </div>
+
+                <!-- FRANJA DE LOGOS QUE OCUPA EL ESPACIO INTERMEDIO -->
+                <div class="logos-banner">
+                    <div class="logo-item">
+                        <div class="logo-item-wrap"><img src="Logo ICTRA.png" alt="ICTRA"></div>
+                        <span class="logo-label">CEEITRA</span>
+                    </div>
+                    <div class="logo-item">
+                        <div class="logo-item-wrap"><img src="LOGO ICC.png" alt="ICC"></div>
+                        <span class="logo-label">CEE ICC</span>
+                    </div>
+                    <div class="logo-item">
+                        <div class="logo-item-wrap icn-zoom"><img src="LOGO CEE ICN PNG.png" alt="ICN"></div>
+                        <span class="logo-label">CEE ICN</span>
                     </div>
                 </div>
+
                 <table>
                     <thead>
                         <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
@@ -1268,7 +1296,7 @@
                     </tbody>
                 </table>
                 <div class="card-footer">
-                    <span>CEEITRA • CEE ICC • CEE ICN</span>
+                    <span>ESCUELA DE INGENIERÍA</span>
                     <span>¡Tiki Tiki Ti!</span>
                 </div>
             </div>
