@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Bingo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a365d;
+            margin-top: 0;
+        }
+        .config-panel {
+            display: flex;
+            gap: 15px;
+            background: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .config-panel label {
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .config-panel input {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        button {
+            cursor: pointer;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            transition: 0.2s ease;
+        }
+        .btn-draw {
+            background-color: #3182ce;
+            color: white;
+            font-size: 18px;
+        }
+        .btn-draw:hover {
+            background-color: #2b6cb0;
+        }
+        .btn-draw:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .btn-reset {
+            background-color: #e53e3e;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #c53030;
+        }
+        .display-box {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .current-ball {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #48bb78, #22543d);
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .stats {
+            text-align: center;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .board-container {
+            margin-top: 20px;
+        }
+        .board-container h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .ball-slot {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #edf2f7;
+            color: #a0aec0;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .ball-slot.called {
+            background-color: #3182ce;
+            color: white;
+            animation: pop 0.3s ease;
+        }
+        .history-list {
+            margin-top: 20px;
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 15px;
+            color: #4a5568;
+            word-break: break-word;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.7); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bolas de Bingo</h1>
+
+    <!-- Horizonte / Rango de números -->
+    <div class="config-panel">
+        <label for="min-num">Desde:</label>
+        <input type="number" id="min-num" value="1" min="1">
+        <label for="max-num">Hasta:</label>
+        <input type="number" id="max-num" value="75" min="1">
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="actions">
+        <button id="btn-draw" class="btn-draw" onclick="sacarNumero()">¡Sacar Número!</button>
+        <button class="btn-reset" onclick="reiniciarJuego()">Reiniciar</button>
+    </div>
+
+    <!-- Bola Actual -->
+    <div class="display-box">
+        <div id="current-ball" class="current-ball">-</div>
+    </div>
+
+    <div class="stats" id="stats">
+        Números extraídos: 0 / 75
+    </div>
+
+    <!-- Historial en orden de salida -->
+    <div>
+        <strong>Orden de salida:</strong>
+        <div class="history-list" id="history">Aún no se han sacado números.</div>
+    </div>
+
+    <!-- Tablero con todos los números -->
+    <div class="board-container">
+        <h3>Tablero general</h3>
+        <div class="board" id="board"></div>
+    </div>
+</div>
+
+<script>
+    let min = 1;
+    let max = 75;
+    let availableNumbers = [];
+    let calledNumbers = []; // En el orden en que salen
+
+    const inputMin = document.getElementById('min-num');
+    const inputMax = document.getElementById('max-num');
+    const displayBall = document.getElementById('current-ball');
+    const stats = document.getElementById('stats');
+    const historyBox = document.getElementById('history');
+    const board = document.getElementById('board');
+    const btnDraw = document.getElementById('btn-draw');
+
+    // Inicializa la configuración
+    function init() {
+        min = parseInt(inputMin.value) || 1;
+        max = parseInt(inputMax.value) || 75;
+
+        if (min >= max) {
+            alert('El número mínimo debe ser menor que el número máximo.');
+            inputMax.value = min + 1;
+            max = min + 1;
+        }
+
+        // Llenar la lista de números disponibles
+        availableNumbers = [];
+        calledNumbers = [];
+        for (let i = min; i <= max; i++) {
+            availableNumbers.push(i);
+        }
+
+        // Permitir cambiar límites solo cuando el juego está recién reiniciado
+        inputMin.disabled = false;
+        inputMax.disabled = false;
+        btnDraw.disabled = false;
+        displayBall.textContent = "-";
+
+        actualizarStats();
+        generarTablero();
+        actualizarHistorial();
+    }
+
+    // Genera las casillas del tablero
+    function generarTablero() {
+        board.innerHTML = '';
+        for (let i = min; i <= max; i++) {
+            const slot = document.createElement('div');
+            slot.classList.add('ball-slot');
+            slot.id = `slot-${i}`;
+            slot.textContent = i;
+            board.appendChild(slot);
+        }
+    }
+
+    // Saca una bola sin repetición
+    function sacarNumero() {
+        if (availableNumbers.length === 0) {
+            alert('¡Ya han salido todos los números del rango!');
+            return;
+        }
+
+        // Bloquear inputs para no cambiar el rango a mitad de partida
+        inputMin.disabled = true;
+        inputMax.disabled = true;
+
+        // Elegir un índice al azar
+        const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+        const numero = availableNumbers.splice(randomIndex, 1)[0];
+
+        calledNumbers.push(numero);
+
+        // Actualizar interfaz
+        displayBall.textContent = numero;
+        
+        const slot = document.getElementById(`slot-${numero}`);
+        if (slot) slot.classList.add('called');
+
+        actualizarHistorial();
+        actualizarStats();
+
+        if (availableNumbers.length === 0) {
+            btnDraw.disabled = true;
+            setTimeout(() => alert('¡Juego terminado! Han salido todos los números.'), 100);
+        }
+    }
+
+    function actualizarStats() {
+        const total = max - min + 1;
+        stats.textContent = `Números extraídos: ${calledNumbers.length} / ${total}`;
+    }
+
+    function actualizarHistorial() {
+        if (calledNumbers.length === 0) {
+            historyBox.textContent = 'Aún no se han sacado números.';
+        } else {
+            // Muestra los números separados por guiones en orden de salida
+            historyBox.textContent = calledNumbers.join(' - ');
+        }
+    }
+
+    function reiniciarJuego() {
+        if (calledNumbers.length > 0) {
+            if (!confirm('¿Seguro que deseas reiniciar la partida? Se borrará todo el progreso.')) {
+                return;
+            }
+        }
+        init();
+    }
+
+    // Detectar cambios en los inputs mientras no haya empezado la partida
+    inputMin.addEventListener('change', init);
+    inputMax.addEventListener('change', init);
+
+    // Iniciar por primera vez
+    init();
+</script>
+
+</body>
+</html>
