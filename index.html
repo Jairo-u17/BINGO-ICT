@@ -472,7 +472,6 @@
             100% { transform: scale(1.05); }
         }
 
-        /* BOTÓN FLOTANTE EN ESQUINA INFERIOR IZQUIERDA */
         .bottom-left-btn {
             position: fixed;
             bottom: 18px;
@@ -514,7 +513,6 @@
 
 <canvas id="confetti-canvas"></canvas>
 
-<!-- BOTÓN EN ESQUINA INFERIOR IZQUIERDA -->
 <button class="bottom-left-btn" onclick="generarCartonesPDF()" title="Crear cartones listos para imprimir">
     <span>🖨️</span> Generar Cartones PDF
 </button>
@@ -703,6 +701,8 @@
     let calledNumbers = [];
     let isRolling = false;
 
+    const STORAGE_KEY = 'bingo_ict_data_v1';
+
     const inputMin = document.getElementById('min-num');
     const inputMax = document.getElementById('max-num');
     const displayBall = document.getElementById('current-ball');
@@ -849,35 +849,102 @@
         return 'O';
     }
 
-    function init() {
-        min = parseInt(inputMin.value) || 1;
-        max = parseInt(inputMax.value) || 75;
+    /* GESTIÓN DE LOCALSTORAGE (PERSISTENCIA) */
+    function saveState() {
+        const state = {
+            min,
+            max,
+            availableNumbers,
+            calledNumbers,
+            lastLetter: displayLetter.textContent,
+            lastNum: displayNum.textContent
+        };
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch(e) {}
+    }
 
-        if (min >= max) {
-            alert('El número inicial debe ser menor que el final.');
-            inputMax.value = min + 5;
-            max = min + 5;
-        }
+    function loadState() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                return JSON.parse(saved);
+            }
+        } catch(e) {}
+        return null;
+    }
 
-        availableNumbers = [];
-        calledNumbers = [];
-        for (let i = min; i <= max; i++) {
-            availableNumbers.push(i);
+    function init(forceReset = false) {
+        const savedState = forceReset ? null : loadState();
+
+        if (savedState && savedState.calledNumbers) {
+            // Restaurar sesión previa guardada
+            min = savedState.min || 1;
+            max = savedState.max || 75;
+            inputMin.value = min;
+            inputMax.value = max;
+            availableNumbers = savedState.availableNumbers || [];
+            calledNumbers = savedState.calledNumbers || [];
+
+            displayLetter.textContent = savedState.lastLetter || "-";
+            displayNum.textContent = savedState.lastNum || "-";
+
+            // Si ya hay juego en marcha, bloquear inputs
+            if (calledNumbers.length > 0) {
+                inputMin.disabled = true;
+                inputMax.disabled = true;
+            } else {
+                inputMin.disabled = false;
+                inputMax.disabled = false;
+            }
+
+            if (availableNumbers.length === 0 && calledNumbers.length > 0) {
+                btnDraw.disabled = true;
+            } else {
+                btnDraw.disabled = false;
+            }
+        } else {
+            // Iniciar nueva partida
+            min = parseInt(inputMin.value) || 1;
+            max = parseInt(inputMax.value) || 75;
+
+            if (min >= max) {
+                alert('El número inicial debe ser menor que el final.');
+                inputMax.value = min + 5;
+                max = min + 5;
+            }
+
+            availableNumbers = [];
+            calledNumbers = [];
+            for (let i = min; i <= max; i++) {
+                availableNumbers.push(i);
+            }
+
+            inputMin.disabled = false;
+            inputMax.disabled = false;
+            btnDraw.disabled = false;
+            
+            displayLetter.textContent = "-";
+            displayNum.textContent = "-";
+
+            localStorage.removeItem(STORAGE_KEY);
         }
 
         isRolling = false;
-        inputMin.disabled = false;
-        inputMax.disabled = false;
-        btnDraw.disabled = false;
-        
         displayBall.className = 'current-ball-wrapper';
-        displayLetter.textContent = "-";
-        displayNum.textContent = "-";
         stage.classList.remove('celebrate');
 
-        actualizarStats();
         generarTableroBingo();
+
+        // Marcar visualmente los números que ya habían salido en la sesión guardada
+        calledNumbers.forEach(item => {
+            const slot = document.getElementById(`slot-${item.numero}`);
+            if (slot) slot.classList.add('called');
+        });
+
+        actualizarStats();
         actualizarHistorial();
+        saveState();
     }
 
     function generarTableroBingo() {
@@ -967,6 +1034,7 @@
 
         actualizarHistorial();
         actualizarStats();
+        saveState(); // Guardar en el navegador
 
         isRolling = false;
         if (availableNumbers.length > 0) {
@@ -994,14 +1062,13 @@
     function reiniciarJuego() {
         if (isRolling) return;
         if (calledNumbers.length > 0) {
-            if (!confirm('¿Seguro que quieres reiniciar la fonda? Se limpiarán todos los números.')) {
+            if (!confirm('¿Seguro que quieres reiniciar la fonda? Se borrarán todos los números guardados.')) {
                 return;
             }
         }
-        init();
+        init(true);
     }
 
-    /* GENERADOR DE CARTONES LISTOS PARA IMPRIMIR O GUARDAR EN PDF */
     function getRandomSample(arr, size) {
         let shuffled = [...arr].sort(() => 0.5 - Math.random());
         return shuffled.slice(0, size);
@@ -1189,8 +1256,8 @@
         printWindow.document.close();
     }
 
-    inputMin.addEventListener('change', init);
-    inputMax.addEventListener('change', init);
+    inputMin.addEventListener('change', () => init(true));
+    inputMax.addEventListener('change', () => init(true));
 
     init();
 </script>
