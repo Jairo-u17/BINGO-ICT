@@ -3,167 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Bingo</title>
+    <title>Gran Bingo Dieciochero - BINGO ICT</title>
     <style>
         * {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #f0f2f5;
+            /* Fondo con tonos patrios y patrón suave */
+            background: linear-gradient(135deg, #0b2545 0%, #134074 40%, #8d0801 100%);
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
+            position: relative;
         }
+        
+        /* Banderines dieciocheros superiores decorativos */
+        body::before {
+            content: "🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱 🇨🇱";
+            position: absolute;
+            top: 6px;
+            font-size: 1.3rem;
+            letter-spacing: 12px;
+            opacity: 0.85;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            border-top: 8px solid #d90429;
+            border-bottom: 8px solid #00509d;
+            margin-top: 25px;
+        }
+
+        /* Encabezado con título y logos a la derecha */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px dashed #d90429;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .title-section h1 {
+            color: #00296b;
+            margin: 0;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .title-section p {
+            color: #d90429;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 5px 0 0 0;
+        }
+
+        /* Caja de Logos BINGO ICT arriba a la derecha */
+        .brand-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f8f9fa;
+            border: 2px solid #00509d;
             border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 10px 14px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
-        h1 {
-            text-align: center;
-            color: #1a365d;
-            margin-top: 0;
+
+        .brand-title {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #00296b;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #d90429;
+            padding-bottom: 2px;
+            text-transform: uppercase;
         }
+
+        .brand-logos {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .brand-logos img {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #00509d;
+            background: white;
+            transition: transform 0.2s;
+        }
+
+        .brand-logos img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Panel de Rango */
         .config-panel {
             display: flex;
             gap: 15px;
-            background: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
+            background: #f1f5f9;
+            padding: 14px;
+            border-radius: 10px;
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #00509d;
         }
+
         .config-panel label {
             font-weight: bold;
-            color: #2d3748;
+            color: #00296b;
         }
+
         .config-panel input {
-            width: 70px;
+            width: 75px;
             padding: 8px;
-            border: 1px solid #cbd5e0;
-            border-radius: 5px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
             font-size: 16px;
             text-align: center;
+            font-weight: bold;
         }
+
+        /* Botones */
         .actions {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 18px;
             margin-bottom: 25px;
         }
+
         button {
             cursor: pointer;
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 12px 28px;
+            font-size: 17px;
             font-weight: bold;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             transition: 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
         .btn-draw {
-            background-color: #3182ce;
+            background-color: #d90429;
             color: white;
-            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(217, 4, 41, 0.35);
         }
+
         .btn-draw:hover {
-            background-color: #2b6cb0;
+            background-color: #b00320;
+            transform: translateY(-2px);
         }
+
         .btn-draw:disabled {
-            background-color: #a0aec0;
+            background-color: #94a3b8;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
+
         .btn-reset {
-            background-color: #e53e3e;
+            background-color: #00509d;
             color: white;
+            box-shadow: 0 4px 12px rgba(0, 80, 157, 0.35);
         }
+
         .btn-reset:hover {
-            background-color: #c53030;
+            background-color: #003870;
+            transform: translateY(-2px);
         }
+
+        /* Bola de Bingo estilo patrio */
         .display-box {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
+
         .current-ball {
             display: inline-flex;
             justify-content: center;
             align-items: center;
-            width: 110px;
-            height: 110px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #48bb78, #22543d);
+            background: radial-gradient(circle at 35% 35%, #ff4d6d, #800f2f 85%);
             color: white;
-            font-size: 48px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 58px;
+            font-weight: 900;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.4);
         }
+
         .stats {
             text-align: center;
-            color: #4a5568;
-            font-weight: 500;
+            color: #334155;
+            font-size: 1.05rem;
+            font-weight: bold;
             margin-bottom: 20px;
         }
-        .board-container {
-            margin-top: 20px;
+
+        /* Historial y Tablero */
+        .history-wrapper {
+            margin-bottom: 25px;
         }
+
+        .history-wrapper strong {
+            color: #00296b;
+            font-size: 1.05rem;
+        }
+
+        .history-list {
+            margin-top: 8px;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 16px;
+            color: #1e293b;
+            min-height: 48px;
+            max-height: 110px;
+            overflow-y: auto;
+            word-break: break-word;
+        }
+
         .board-container h3 {
-            color: #2d3748;
-            margin-bottom: 10px;
+            color: #00296b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
         .board {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
             gap: 8px;
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            max-height: 250px;
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            max-height: 280px;
             overflow-y: auto;
         }
+
         .ball-slot {
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #edf2f7;
-            color: #a0aec0;
+            background: #ffffff;
+            color: #94a3b8;
             font-weight: bold;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .ball-slot.called {
-            background-color: #3182ce;
-            color: white;
-            animation: pop 0.3s ease;
-        }
-        .history-list {
-            margin-top: 20px;
-            background: #f7fafc;
-            padding: 12px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
             font-size: 15px;
-            color: #4a5568;
-            word-break: break-word;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
         }
-        @keyframes pop {
-            0% { transform: scale(0.7); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+
+        .ball-slot.called {
+            background: #00509d;
+            color: white;
+            border-color: #003f7a;
+            font-weight: 800;
+            transform: scale(1.04);
+            box-shadow: 0 2px 5px rgba(0, 80, 157, 0.3);
+        }
+
+        @media (max-width: 650px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .brand-box {
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Bolas de Bingo</h1>
+    <!-- Encabezado con Logos BINGO ICT a la derecha -->
+    <header class="header">
+        <div class="title-section">
+            <h1>¡Gran Bingo Dieciochero! 🇨🇱</h1>
+            <p>¡Tiki tiki ti! Saquemos los numeritos</p>
+        </div>
+
+        <div class="brand-box">
+            <span class="brand-title">BINGO ICT</span>
+            <div class="brand-logos">
+                <img src="Logo ICTRA.jpg" alt="Logo ICTRA" title="CEEITRA / ICTRA">
+                <img src="LOGO ICC.jpg" alt="Logo ICC" title="CEE ICC">
+                <img src="LOGO CEE ICN PNG.jpg" alt="Logo CEE ICN" title="CEE ICN">
+            </div>
+        </div>
+    </header>
 
     <!-- Horizonte / Rango de números -->
     <div class="config-panel">
@@ -175,8 +329,8 @@
 
     <!-- Botones de Acción -->
     <div class="actions">
-        <button id="btn-draw" class="btn-draw" onclick="sacarNumero()">¡Sacar Número!</button>
-        <button class="btn-reset" onclick="reiniciarJuego()">Reiniciar</button>
+        <button id="btn-draw" class="btn-draw" onclick="sacarNumero()">🎲 ¡Cantar Número!</button>
+        <button class="btn-reset" onclick="reiniciarJuego()">🔄 Reiniciar Bingo</button>
     </div>
 
     <!-- Bola Actual -->
@@ -189,14 +343,14 @@
     </div>
 
     <!-- Historial en orden de salida -->
-    <div>
-        <strong>Orden de salida:</strong>
-        <div class="history-list" id="history">Aún no se han sacado números.</div>
+    <div class="history-wrapper">
+        <strong>📜 Orden de salida:</strong>
+        <div class="history-list" id="history">Aún no se han sacado números. ¡A empezar la fonda!</div>
     </div>
 
     <!-- Tablero con todos los números -->
     <div class="board-container">
-        <h3>Tablero general</h3>
+        <h3>📍 Tablero General</h3>
         <div class="board" id="board"></div>
     </div>
 </div>
@@ -205,7 +359,7 @@
     let min = 1;
     let max = 75;
     let availableNumbers = [];
-    let calledNumbers = []; // En el orden en que salen
+    let calledNumbers = [];
 
     const inputMin = document.getElementById('min-num');
     const inputMax = document.getElementById('max-num');
@@ -215,25 +369,22 @@
     const board = document.getElementById('board');
     const btnDraw = document.getElementById('btn-draw');
 
-    // Inicializa la configuración
     function init() {
         min = parseInt(inputMin.value) || 1;
         max = parseInt(inputMax.value) || 75;
 
         if (min >= max) {
-            alert('El número mínimo debe ser menor que el número máximo.');
+            alert('El número inicial debe ser menor que el final.');
             inputMax.value = min + 1;
             max = min + 1;
         }
 
-        // Llenar la lista de números disponibles
         availableNumbers = [];
         calledNumbers = [];
         for (let i = min; i <= max; i++) {
             availableNumbers.push(i);
         }
 
-        // Permitir cambiar límites solo cuando el juego está recién reiniciado
         inputMin.disabled = false;
         inputMax.disabled = false;
         btnDraw.disabled = false;
@@ -244,7 +395,6 @@
         actualizarHistorial();
     }
 
-    // Genera las casillas del tablero
     function generarTablero() {
         board.innerHTML = '';
         for (let i = min; i <= max; i++) {
@@ -256,24 +406,20 @@
         }
     }
 
-    // Saca una bola sin repetición
     function sacarNumero() {
         if (availableNumbers.length === 0) {
-            alert('¡Ya han salido todos los números del rango!');
+            alert('¡Ya han salido todos los números! ¡Hay cartón lleno!');
             return;
         }
 
-        // Bloquear inputs para no cambiar el rango a mitad de partida
         inputMin.disabled = true;
         inputMax.disabled = true;
 
-        // Elegir un índice al azar
         const randomIndex = Math.floor(Math.random() * availableNumbers.length);
         const numero = availableNumbers.splice(randomIndex, 1)[0];
 
         calledNumbers.push(numero);
 
-        // Actualizar interfaz
         displayBall.textContent = numero;
         
         const slot = document.getElementById(`slot-${numero}`);
@@ -284,38 +430,35 @@
 
         if (availableNumbers.length === 0) {
             btnDraw.disabled = true;
-            setTimeout(() => alert('¡Juego terminado! Han salido todos los números.'), 100);
+            setTimeout(() => alert('¡Último número cantado! Fin del bingo.'), 150);
         }
     }
 
     function actualizarStats() {
         const total = max - min + 1;
-        stats.textContent = `Números extraídos: ${calledNumbers.length} / ${total}`;
+        stats.textContent = `Números cantados: ${calledNumbers.length} / ${total}`;
     }
 
     function actualizarHistorial() {
         if (calledNumbers.length === 0) {
-            historyBox.textContent = 'Aún no se han sacado números.';
+            historyBox.textContent = 'Aún no se han sacado números. ¡A empezar la fonda!';
         } else {
-            // Muestra los números separados por guiones en orden de salida
             historyBox.textContent = calledNumbers.join(' - ');
         }
     }
 
     function reiniciarJuego() {
         if (calledNumbers.length > 0) {
-            if (!confirm('¿Seguro que deseas reiniciar la partida? Se borrará todo el progreso.')) {
+            if (!confirm('¿Seguro que quieres reiniciar la partida?')) {
                 return;
             }
         }
         init();
     }
 
-    // Detectar cambios en los inputs mientras no haya empezado la partida
     inputMin.addEventListener('change', init);
     inputMax.addEventListener('change', init);
 
-    // Iniciar por primera vez
     init();
 </script>
 
